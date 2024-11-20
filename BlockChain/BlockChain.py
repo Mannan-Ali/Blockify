@@ -1,15 +1,14 @@
 #Importing the libraries 
 from dotenv import load_dotenv
 load_dotenv()
+import os
 # To get the exact time when the block is created 
 import datetime 
 # To hash the blocks 
 import hashlib 
 # To encode the block before hasing them 
 import json 
-
 from flask import Flask,jsonify
-
 
 # Part 1 - Building a BlockChain
 class BlockChain :
@@ -108,6 +107,13 @@ def get_chain():
         'length' : len(blockchain.chain)
     }
     return jsonify(response),200
-
+@app.route("/is_valid", methods=['GET'])
+def is_valid():
+    check_valid = blockchain.is_chain_valid(blockchain.chain)
+    response = {
+        'Validity' : check_valid,
+        'length' : len(blockchain.chain)
+    }
+    return jsonify(response),200
 #to run this app
-app.run(host = 'host_value',port=0)
+app.run(host = os.getenv("HOST_VALUE"),port=os.getenv("PORT"))
