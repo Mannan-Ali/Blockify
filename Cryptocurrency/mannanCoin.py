@@ -62,7 +62,8 @@ class BlockChain :
         #it should be before create block as it will be used in it (like in cpp above we need to declare the func in class to let the compiler know)
         self.transactions = []
         self.create_block(proof =1,previous_hash = '0000')
-       
+        self.nodes = set()  #its the commputer/miner/users on the network; to add them to the network
+        #like till now we were dealing with one node address 127.0.0.1/5000 but now we will add more like it 5001,...2
     def create_block(self,proof,previous_hash):
         block = {
             'index':len(self.chain)+1, #as the new block will be lenght plus 1 digit 
@@ -129,7 +130,23 @@ class BlockChain :
         previous_block = self.get_previous_block()
         return previous_block['index']+1  #basicaly we are passing the number of block that will have our transection
 
-        
+
+    #address is the address of the node over the network
+    def add_node(self,address):
+        #we will parse the address of the node first
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)#addnig the '127.0.0.1:5000' to nodes (hepls to know which nodes are on our netwrok or using our blockchian)
+        #also now we can perform function like avalanch effect, and consenses
+        '''
+        what does parse url do 
+        >>> from urllib.parse import urlparse
+        >>> address = 'http://127.0.0.1:5000/'
+        >>> parsed_url = urlparse(address)
+        >>> parsed_url
+        Output : ParseResult(scheme='http', netloc='127.0.0.1:5000', path='/', params='', query='', fragment='')
+        we take out the netlock part as we only need that part
+        '''
+
 # Part 2 - Changes : Mining our BlockChain with transections between person
 #Creating a web app to interact with web on postman
 app = Flask(__name__)
