@@ -146,6 +146,35 @@ class BlockChain :
         Output : ParseResult(scheme='http', netloc='127.0.0.1:5000', path='/', params='', query='', fragment='')
         we take out the netlock part as we only need that part
         '''
+    
+    '''
+    What is the consensus? That is just an algorithm to make sure that all the nodes contain the same chain at any time, t.
+    So whenever a new block is mined on any node, you know, to welcome some new transactions that happen around that node, well, we will make sure that all the other nodes
+    in the decentralized network are also updated with the same chain.And that's very important when we implement a blockchain because indeed that's one of the pillars of the blockchain.
+    '''
+    #CHECKING THE CONSENSUS
+    # since each node contains a specific version of the blockchain, whether it is up to date or not, well, we will need to apply this replace_chain function inside a specific node
+    def replace_chain(self):
+        network = self.nodes #all the nodes will make network basic
+        #we will find this if it exits we will replace all the chains of all the nodes over the network with these
+        longest_chain = None 
+        max_length = len(self.chain) #we initialized it with current chains length so when we iterate we can check if any chain is longer than this one we will replace it 
+        for node in network: #checking all nodes in the network
+            #the node here contains the address that we set in add_node so we can use it to get to different nodes
+            response = requests.get(f'http://{node}/get_chain')#here we are requesting for our own functions response which gives the chain and its length in return which we can compare here (we ask for get_chain for all the nodes)   
+
+            if response.status_code == 200: # checking if everything fine then move ahead
+                length = response.json()['length'] #taking the length from response
+                chain = response.json()['chain'] #taking the chain from response
+                if length > max_length and self.is_chain_valid(chain):
+                    max_length = length 
+                    longest_chain = chain
+        
+        if longest_chain: #by  checking this we are cheking if the chain was replaced or not and if longest chain was found or not if yes return true
+            self.chain = longest_chain # chan
+            return True
+        return False
+
 
 # Part 2 - Changes : Mining our BlockChain with transections between person
 #Creating a web app to interact with web on postman
@@ -218,25 +247,3 @@ app.run(host = os.getenv("HOST_VALUE"),port=os.getenv("PORT"))
 
 
 
-'''
-        What is the consensus?
-        That is just an algorithm to make sure
-
-        that all the nodes contain the same chain at any time, t.
-
-        So whenever a new block is mined on any node,
-
-        you know, to welcome some new transactions that happen
-
-        around that node,
-
-        well, we will make sure that all the other nodes
-
-        in the decentralized network are also updated
-
-        with the same chain.
-
-        And that's very important when we implement a blockchain
-
-        because indeed that's one of the pillars of the blockchain.
-'''
