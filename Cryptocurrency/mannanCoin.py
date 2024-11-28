@@ -1,6 +1,23 @@
+#         * * * * * *   The code that I used in the blochain file is also used here with few changes * * * * * * * 
+''' We have multiple ways to create a cryptocurrency from a blockchain here 
+1. we are implemeting it using the blockchain file implementation we did earlier
+    =>A cryptocurrency is native to its blockchain. IT Operates on its own blockchain.
+    =>You are creating a blockchain (like Ethereum or Bitcoin) and developing the core cryptocurrency (using the file or code of that blockchain) of that blockchain (Ether or Bitcoin). This is a cryptocurrency.
+
+2. another way is Creating a Cryptocurrency Using Smart Contracts:
+    =>Tokens created by smart contracts are not considered cryptocurrencies because they do not run on their own independent blockchain.
+    =>Tokens can have currency-like properties and function similarly to cryptocurrencies in certain applications, but they are technically not cryptocurrencies.
+
+Difference:
+    =>Are Tokens a Type of Cryptocurrency?
+    Technically, yes.
+    Tokens can act as a form of currency or digital asset within their ecosystem.
+    The key difference is tokens depend on an existing blockchain, while cryptocurrencies run on their own blockchain.
+ '''
 #Importing the libraries 
 from dotenv import load_dotenv
 load_dotenv()
+#python-dotenv 1.0.1
 import os
 # To get the exact time when the block is created 
 import datetime 
@@ -9,6 +26,9 @@ import hashlib
 # To encode the block before hasing them 
 import json 
 from flask import Flask,jsonify
+#Flask 3.1.0
+
+#requests==2.18.4
 
 # Part 1 - Building a BlockChain
 class BlockChain :
