@@ -17,7 +17,6 @@ Difference:
 #Importing the libraries 
 from dotenv import load_dotenv
 load_dotenv()
-#python-dotenv 1.0.1
 import os
 # To get the exact time when the block is created 
 import datetime 
@@ -25,17 +24,43 @@ import datetime
 import hashlib 
 # To encode the block before hasing them 
 import json 
-from flask import Flask,jsonify
+from flask import Flask,jsonify,request #this request works like post and form in js , it will be used to get data from the user (like the data we send in postman) or  get data from incoming HTTP requests sent to your Flask app.
+import requests
+'''
+You use requests to interact with APIs (other programs running on different servers). For example, if you want to get information from another server or send data to a server, you can use requests.
+The requests library in Python is like a tool that allows your program to talk to other programs over the internet. In your decentralized blockchain, the nodes (computers) need to communicate with each other to keep their blockchain copies in sync.
+# Sending a GET request to fetch data
+response = requests.get('http://example.com/data')
+similar to fetch 
+
+DIFFERENCE BETWEEN REQUEST(FLAST) AND REQUESTS:
+    =>The request object in Flask is part of the Flask web framework, and it is used to handle incoming HTTP requests to your Flask server. This object is available to you in your route handlers.
+    =>It provides you with data about the request that was made to your Flask application, such as query parameters, form data, JSON data, etc.
+    =>Example Use Case: If your Flask app is running a node in the blockchain and someone sends a POST request to add a new block, the request object in Flask will be used to receive and handle that incoming data.
+
+    =>The requests library is a Python package that allows you to send HTTP requests (GET, POST, PUT, etc.) from your Python application to other servers.
+    =>It's typically used when your Python program needs to request data from or send data to external servers or APIs (like another node in your blockchain network).
+    =>Example Use Case: If your Python blockchain node wants to check what other nodes have, it can use requests to ask them for their blockchain data.
+      Focus: Outgoing HTTP requests from your program to other servers.
+
+'''
+
+from uuid import uuid4
+from urllib.parse import urlparse
 #Flask 3.1.0
+#requests 2.18.4
+#python-dotenv 1.0.1
 
-#requests==2.18.4
-
-# Part 1 - Building a BlockChain
+# Part 1 - Changes on Building a BlockChain to fit the cryptocurrency
 class BlockChain :
     def __init__(self) :
         #this is the chain part of the block it is basically a list containing blocks
         self.chain = []
-      
+
+        #CHANGE 1:
+        #list to append the transections that will be happening around the world before putting them in block
+        #it should be before create block as it will be used in it (like in cpp above we need to declare the func in class to let the compiler know)
+        self.transactions = []
         self.create_block(proof =1,previous_hash = '0000')
        
     def create_block(self,proof,previous_hash):
@@ -44,7 +69,9 @@ class BlockChain :
             'timestamp': str(datetime.datetime.now()), #exact time block is mined
             'proof' : proof, #The proof that we get when mining our block by solving our proof of work
             'previous_hash':previous_hash,
+            'transactions' : self.transactions
             }
+        self.transactions = [] # after transections are added to the block we need to empty the list
         self.chain.append(block)
         #appending the created block to the chain
         return block
@@ -87,8 +114,23 @@ class BlockChain :
             previous_block = block
             block_index +=1
         return True
-    
-# Part 2 - Mining our BlockChain
+
+    #CHANGE 2:
+    #here the transection structure is defined and added to transaction list-(this list is choosen by the miner from the mempool)
+    def add_transactions(self,sender,receiver,amount):
+        self.transactions.append(
+            {
+                'sender':sender,
+                'receiver':receiver,
+                'amount': amount,
+            }
+        )
+        #we will return the index of the block that will receive this transection
+        previous_block = self.get_previous_block()
+        return previous_block['index']+1  #basicaly we are passing the number of block that will have our transection
+
+        
+# Part 2 - Changes : Mining our BlockChain with transections between person
 #Creating a web app to interact with web on postman
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
@@ -143,3 +185,41 @@ def is_valid():
     return jsonify(response),200
 #to run this app
 app.run(host = os.getenv("HOST_VALUE"),port=os.getenv("PORT"))
+
+
+#Part 3 : New Decentralizing our blockchain
+#Inside which we will create a decentralized networkof several nodes and each one of you will be able to mine some blocks on any of these nodes
+
+
+#Important points read
+'''
+1. what makes a blockchain a cryptocurrency?Well, the answer is transactions.The principle of cryptocurrency is that we're able to exchange these cryptocurrencies through transactions that are secured, added to new blocks, mined by the miners in the most secured way.
+2.  now that we understand that, well, the key element we'll be adding into our blockchain class are these transactions.That's our first pillar. And then the second pillar will be to build a consensus function to make sure that each node
+    =>in the decentralized network has the same chain. You know, because once some new transactions are integrated to a new block which is added to the blockchain, well, we need to make sure that all the nodes
+    =>in the network get also their chain updated with this last mined block containing the transactions.And this particular check is called the consensus. So that's our two pillars for the development
+'''
+
+
+
+'''
+        What is the consensus?
+        That is just an algorithm to make sure
+
+        that all the nodes contain the same chain at any time, t.
+
+        So whenever a new block is mined on any node,
+
+        you know, to welcome some new transactions that happen
+
+        around that node,
+
+        well, we will make sure that all the other nodes
+
+        in the decentralized network are also updated
+
+        with the same chain.
+
+        And that's very important when we implement a blockchain
+
+        because indeed that's one of the pillars of the blockchain.
+'''

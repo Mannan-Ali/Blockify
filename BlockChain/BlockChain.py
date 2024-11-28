@@ -9,7 +9,8 @@ import hashlib
 # To encode the block before hasing them 
 import json 
 from flask import Flask,jsonify
-
+#Flask 3.1.0
+#python-dotenv 1.0.1
 # Part 1 - Building a BlockChain
 class BlockChain :
     def __init__(self) :
