@@ -135,7 +135,7 @@ class BlockChain :
     def add_node(self,address):
         #we will parse the address of the node first
         parsed_url = urlparse(address)
-        self.nodes.add(parsed_url.netloc)#addnig the '127.0.0.1:5000' to nodes (hepls to know which nodes are on our netwrok or using our blockchian)
+        self.nodes.add(parsed_url.netloc)#addnig the '127.0.0.1:5000'part to nodes (hepls to know which nodes are on our netwrok or using our blockchian)
         #also now we can perform function like avalanch effect, and consenses
         '''
         what does parse url do 
@@ -155,7 +155,7 @@ class BlockChain :
     #CHECKING THE CONSENSUS
     # since each node contains a specific version of the blockchain, whether it is up to date or not, well, we will need to apply this replace_chain function inside a specific node
     def replace_chain(self):
-        network = self.nodes #all the nodes will make network basic
+        network = self.nodes #all the nodes will make network basically
         #we will find this if it exits we will replace all the chains of all the nodes over the network with these
         longest_chain = None 
         max_length = len(self.chain) #we initialized it with current chains length so when we iterate we can check if any chain is longer than this one we will replace it 
@@ -174,12 +174,38 @@ class BlockChain :
             self.chain = longest_chain # chan
             return True
         return False
+        #if longest_chain = none then return false so the chain before reamins same (as longest chain)
+
 
 
 # Part 2 - Changes : Mining our BlockChain with transections between person
 #Creating a web app to interact with web on postman
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
+
+#creating an address for each node on Port 5000
+'''
+Why Do We Need a Node Address? Read at last also
+In cryptocurrency, miners are rewarded when they successfully mine a block. For example:
+In Bitcoin, miners receive a certain number of Bitcoins as a reward.
+This reward is recorded as a transaction from the blockchain (node address) to the miner’s wallet.
+To issue this reward, your blockchain needs an address for the node to show where the reward comes from.
+'''
+
+'''
+Python’s UUID4 function generates a random and unique identifier.
+This identifier serves as the address for a node in the network.
+Making It Usable:
+
+Since a UUID4 address includes dashes (-) and might be long, you’ll:
+Convert it into a string using str().
+Remove the dashes using the .replace("-", "") function.
+This creates a clean and compact unique address for the node.
+'''
+#creating an address for node on Port (well here specificly : 5000)
+node_address = str(uuid4()).replace('-','')
+#this will be the address of the node of port 5000 which will help us give reward to the minner that mined the block 
+
 #creating an intance  BlockChain
 blockchain = BlockChain()
 
@@ -194,6 +220,9 @@ def mine_block():
     proof = blockchain.proof_of_work(previous_proof)
     #note the hash for prev block is not stored anywhere so to get it also we use hash 
     previous_hash = blockchain.hash(previous_block)
+    #adding transactions ( when you mine a block when or  a miner mines a block, he gets some mannan coins.We are gonna give a gift
+    # to the miner whenever the miner mines a new block.And this gift will be some Ad coins. So the sender will be,well, the node address,) the receiver will be the miner
+    blockchain.add_transactions(sender = node_address , receiver = 'Void', amount= 10)
     block = blockchain.create_block(proof,previous_hash)
     #to display in postman 
     response = {
@@ -201,7 +230,8 @@ def mine_block():
         'index' : block['index'],
         'timestamp': block['timestamp'],
         'proof' : block['proof'],
-        'previous_hash':block['previous_hash']
+        'previous_hash':block['previous_hash'],
+        'transctions':block['transactions']
         }
     return jsonify(response),200  #status https code
 
@@ -232,6 +262,56 @@ def is_valid():
 #to run this app
 app.run(host = os.getenv("HOST_VALUE"),port=os.getenv("PORT"))
 
+#adding a new transaction to the blockchain
+@app.route("/add_transaction", methods=['POST'])
+def add_transaction():
+    #getting data from postman
+    json = request.get_json()
+    transaction_keys = {'sender','receiver','amount'}
+    #If all the keys in the transaction keys list are not in our JSON file,
+    if not all (key in json for key in transaction_keys):
+        return 'Some Elements of the transection are missing',400
+    index = blockchain.add_transactions(json['sender'],json['receiver'],json['amount'])
+    response ={'message':f'This transection will be added to block number {index}'}
+    return jsonify(response),201
+
+#connecting new node to the blockchain
+@app.route("/connect_node", methods=['POST'])
+def connect_node():
+    #getting data from postman
+    json = request.get_json()
+    '''
+    the blockchain.nodes will contain the addresses of all the nodes that are to be on the blockchain network.And whenever you want to add a new node
+    to our blockchain network, well you will first add the address of this node in this JSON file and then you will send a request to connect the nodes. using connect_node
+    '''
+    #we get the nodes from postman- this nodes contain the address of the nodes that will be added to the blockchain
+    nodes = json.get('nodes')
+    if nodes is None:
+        return "Nod Nodes to connect",400
+    for node in nodes:
+        blockchain.add_node(node)
+    response ={
+        'message':'All the nodes are connected and the number of nodes oon the blockchain are : ',
+        'total-nodes':list(blockchain.nodes)
+        }
+    return jsonify(response),201
+
+
+#replace chain request implementation here (replacing the chain if by longest chain if needed)
+@app.route("/replace_chain", methods=['GET'])
+def replace_chain():
+    check_chain = blockchain.replace_chain()
+    if check_valid:
+        response = {
+            'message': 'The blockchain is valid, each block is verified',
+            'length' : len(blockchain.chain)
+        }
+    else:
+        response = {
+            'message': 'The blockchain is not valid, someone tempered with the blocks',
+            'length' : len(blockchain.chain)           
+        }
+    return jsonify(response),200
 
 #Part 3 : New Decentralizing our blockchain
 #Inside which we will create a decentralized networkof several nodes and each one of you will be able to mine some blocks on any of these nodes
@@ -247,3 +327,50 @@ app.run(host = os.getenv("HOST_VALUE"),port=os.getenv("PORT"))
 
 
 
+'''
+the node address is of the miner right . if he mined the block on that addresss that mens its his address?
+ChatGPT said:
+ChatGPT
+Not quite—the node address is not the miner’s address. Let me clarify:
+
+What Is the Node Address?
+The node address is an identifier for the node running the blockchain on a specific port, like 5000.
+It represents the blockchain system or the network's origin, not the miner.
+How Rewards Work:
+When a miner successfully mines a block:
+The node (blockchain system) creates a reward transaction.
+The reward is sent from the node's address to the miner’s address.
+This means:
+
+The node address is like the "sender" in the reward transaction.
+The miner’s address is the "receiver" (their unique wallet or identifier).
+Why Is the Node Address Used as the Sender?
+The blockchain network (node) is issuing the reward for mining.
+So, it acts as the "origin" of the reward.
+For example:
+
+Suppose:
+Node address: 123e4567e89b12d3a456426614174000.
+Miner’s address: miner789abcd1234xyz5678.
+Reward transaction:
+"10 HatCoins sent from node address (123e4567...) to miner's address (miner789abcd...)."
+Does the Miner Own the Node Address?
+No, the miner does not own the node address.
+The node address is for the blockchain system itself. The miner has their own separate wallet/address.
+'''
+
+'''
+Why Not Just Use the Port?
+While a port uniquely identifies a running node on a single machine, there are reasons why it isn't enough in a blockchain system:
+
+Ports are Machine-Specific
+
+Ports only make sense within the context of a single computer.
+If you run nodes on multiple machines (e.g., port 5000 on Machine A and port 5000 on Machine B), they will have the same port number, causing confusion.
+A blockchain network can span multiple machines globally, so relying on ports isn't practical.
+Node Addresses Are Portable
+
+A node address (generated using UUID4) is globally unique and independent of the machine or port it's running on.
+This makes it easier to identify a specific node in a decentralized network.
+
+'''
