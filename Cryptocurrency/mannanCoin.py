@@ -300,16 +300,18 @@ def connect_node():
 #replace chain request implementation here (replacing the chain if by longest chain if needed)
 @app.route("/replace_chain", methods=['GET'])
 def replace_chain():
-    check_chain = blockchain.replace_chain()
-    if check_valid:
+    check_chain_replaced = blockchain.replace_chain()
+    if check_chain_replaced:
         response = {
-            'message': 'The blockchain is valid, each block is verified',
-            'length' : len(blockchain.chain)
+            'message': 'The chain is updated to new size',
+            'new_chain':blockchain.chain ,
+            'new_chain_length' : len(blockchain.chain)
         }
     else:
         response = {
-            'message': 'The blockchain is not valid, someone tempered with the blocks',
-            'length' : len(blockchain.chain)           
+            'message': 'The chain needs no update its already the largest',
+            'actual_chain' : blockchain.chain,
+            'actual_length' : len(blockchain.chain)           
         }
     return jsonify(response),200
 
