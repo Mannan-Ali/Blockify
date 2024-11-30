@@ -7,6 +7,10 @@ instance/*
 .webassets-cache
 .env
 
+#Custom files
+Cryptocurrency/port1.py
+Cryptocurrency/port2.py
+Cryptocurrency/port3.py
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

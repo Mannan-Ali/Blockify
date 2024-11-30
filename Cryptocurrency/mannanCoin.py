@@ -48,8 +48,9 @@ DIFFERENCE BETWEEN REQUEST(FLAST) AND REQUESTS:
 from uuid import uuid4
 from urllib.parse import urlparse
 #Flask 3.1.0
-#requests 2.18.4
 #python-dotenv 1.0.1
+#requests  2.32.3
+#urllib3   2.2.3
 
 # Part 1 - Changes on Building a BlockChain to fit the cryptocurrency
 class BlockChain :
@@ -202,9 +203,10 @@ Convert it into a string using str().
 Remove the dashes using the .replace("-", "") function.
 This creates a clean and compact unique address for the node.
 '''
-#creating an address for node on Port (well here specificly : 5000)
+#creating an address for node on Port (well here specificly : 5000) Read below for full understading
 node_address = str(uuid4()).replace('-','')
-#this will be the address of the node of port 5000 which will help us give reward to the minner that mined the block 
+#this will be the address of the node of port 5000 which will help us give reward to the minner that mined the block on this node 
+
 
 #creating an intance  BlockChain
 blockchain = BlockChain()
@@ -222,7 +224,8 @@ def mine_block():
     previous_hash = blockchain.hash(previous_block)
     #adding transactions ( when you mine a block when or  a miner mines a block, he gets some mannan coins.We are gonna give a gift
     # to the miner whenever the miner mines a new block.And this gift will be some Ad coins. So the sender will be,well, the node address,) the receiver will be the miner
-    blockchain.add_transactions(sender = node_address , receiver = 'Void', amount= 10)
+    #now the reason we are passing node_adderess by making it unique because if we pass 5000 here then other nodes might also be running on same port on the internet when this becomes big which can cause issue 
+    blockchain.add_transactions(sender = node_address , receiver = 'Port1', amount= 10)
     block = blockchain.create_block(proof,previous_hash)
     #to display in postman 
     response = {
@@ -259,8 +262,6 @@ def is_valid():
             'length' : len(blockchain.chain)           
         }
     return jsonify(response),200
-#to run this app
-app.run(host = os.getenv("HOST_VALUE"),port=os.getenv("PORT"))
 
 #adding a new transaction to the blockchain
 @app.route("/add_transaction", methods=['POST'])
@@ -275,7 +276,10 @@ def add_transaction():
     response ={'message':f'This transection will be added to block number {index}'}
     return jsonify(response),201
 
-#connecting new node to the blockchain
+#connecting new node to the blockchain its like connecting the nodes on which the blockchain is running over the network with each other 
+#after connecting with this function the things done by different nodes like {"http://127.0.0.1:5002",} will be reflected on all nodes blockchain
+#now in real blockchain this process is done by another function automatically
+
 @app.route("/connect_node", methods=['POST'])
 def connect_node():
     #getting data from postman
@@ -287,7 +291,7 @@ def connect_node():
     #we get the nodes from postman- this nodes contain the address of the nodes that will be added to the blockchain
     nodes = json.get('nodes')
     if nodes is None:
-        return "Nod Nodes to connect",400
+        return "No Nodes to connect",400
     for node in nodes:
         blockchain.add_node(node)
     response ={
@@ -315,51 +319,58 @@ def replace_chain():
         }
     return jsonify(response),200
 
-#Part 3 : New Decentralizing our blockchain
-#Inside which we will create a decentralized networkof several nodes and each one of you will be able to mine some blocks on any of these nodes
+'''                   ******* NOW WE WILL CREATE DIFFERENT FILES TO GET DIFFERENT PORTS/SERVERS AND THEN SEND MONEY TO THEM '''
+#to run this app
+app.run(host = os.getenv("HOST_VALUE"),port=os.getenv("PORT"))
+#here you will change the differet ports on different files
 
 
 #Important points read
+'''
+HOW TO RUN/TEST THE FILE
+1. CREATE 2 OR 3 COPIES OF THE FILE AND THEN REPLACE THE PORT ON THEM
+2. RUN EACH FILE DIFFERENTLY IN THE TERMINAL AND THEN CONNECT THEM USING CONNECT_NODE FUNC YOU CAN ALSO RUN THIS ON DIFFERNT COMPUTER
+3. NOW THIS 3 NODES OR ADDRESS COMBINED WILL MAKE THE NETWORK AND WHATEVER YOU DO WILL BE REFLECTED ON THEM 
+4. THE CONNECTION PART AND THE REPLACE CHAIN PART IS DONE AUTOMATICALLY ON REAL CRYPTOS BUT HERE WE ARE DOING IT ON OUR OWN ON POSTMAN 
+
+'''
 '''
 1. what makes a blockchain a cryptocurrency?Well, the answer is transactions.The principle of cryptocurrency is that we're able to exchange these cryptocurrencies through transactions that are secured, added to new blocks, mined by the miners in the most secured way.
 2.  now that we understand that, well, the key element we'll be adding into our blockchain class are these transactions.That's our first pillar. And then the second pillar will be to build a consensus function to make sure that each node
     =>in the decentralized network has the same chain. You know, because once some new transactions are integrated to a new block which is added to the blockchain, well, we need to make sure that all the nodes
     =>in the network get also their chain updated with this last mined block containing the transactions.And this particular check is called the consensus. So that's our two pillars for the development
+
+
+'''
+
+'''
+1 127.0.0.1 this is my server for eg
+2. when i add 5001,5002,5003 they become different nodes on the server 
+3. using node address each node has unique address 
+4. when any of those node mine a block and trans is added they recevie reward from their own unique node address 
+
+=>reason for node_address 
+1. so each node is different basically if on a server 2 different computer nodes register as 5001 then it will cause problem hence 
+to make it unique 
+2. we are rewarding the miner who mined the block with sender being its own unqiue node address
+
+
+5. another thing to note is that we can also be doing this blockchain.add_transactions(sender='System', receiver=node_address, amount=10)
+
+6. there is a transaction from the node on which the miner is,to this miner getting the Bitcoins.
+    blockchain.add_transactions(sender = node_address , receiver = 'Port1', amount= 10)
+    node_adderess being node and recevier being the miners wallet id
+
+7.Why the transaction from port 5002 isn’t showing in the mined block on port 5001:
+Mempool Isolation:
+
+Each node has its own mempool (its own list of pending transactions). When you send a transaction from port 5002, that transaction is added to port 5002’s mempool, not to port 5001’s. So, when the block is mined by port 5001, it only includes transactions from port 5001’s mempool.
+No Synchronization Between Nodes:
+
+If the nodes are not synchronizing their mempools with each other, then a transaction from one node (port 5002) won't be seen by the other node (port 5001). Thus, port 5001 will only mine transactions it has in its own mempool and not transactions from other nodes.
 '''
 
 
-
-'''
-the node address is of the miner right . if he mined the block on that addresss that mens its his address?
-ChatGPT said:
-ChatGPT
-Not quite—the node address is not the miner’s address. Let me clarify:
-
-What Is the Node Address?
-The node address is an identifier for the node running the blockchain on a specific port, like 5000.
-It represents the blockchain system or the network's origin, not the miner.
-How Rewards Work:
-When a miner successfully mines a block:
-The node (blockchain system) creates a reward transaction.
-The reward is sent from the node's address to the miner’s address.
-This means:
-
-The node address is like the "sender" in the reward transaction.
-The miner’s address is the "receiver" (their unique wallet or identifier).
-Why Is the Node Address Used as the Sender?
-The blockchain network (node) is issuing the reward for mining.
-So, it acts as the "origin" of the reward.
-For example:
-
-Suppose:
-Node address: 123e4567e89b12d3a456426614174000.
-Miner’s address: miner789abcd1234xyz5678.
-Reward transaction:
-"10 HatCoins sent from node address (123e4567...) to miner's address (miner789abcd...)."
-Does the Miner Own the Node Address?
-No, the miner does not own the node address.
-The node address is for the blockchain system itself. The miner has their own separate wallet/address.
-'''
 
 '''
 Why Not Just Use the Port?
