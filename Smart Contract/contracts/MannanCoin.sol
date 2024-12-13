@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
-contract MannanCoin_iCO {
+contract MannanCoin_ICO {
     //state variables
     //introducing total number of MannanCoin to the public on ICO for sale is
 
@@ -42,6 +42,11 @@ contract MannanCoin_iCO {
         //invested + total sold - total coins issued (to get how much coins left)
         _;
     }
+        modifier canSellCoin(address investor,uint coinsToSell) {
+        require(equityInMannanCoin[investor] >= coinsToSell,"You dont have that many coins to sell.");
+        require(totalCoinsBought >= coinsToSell, "Total coins bought cannot be less than coins to sell");
+        _;
+    }
 
     //functions
 
@@ -67,10 +72,9 @@ contract MannanCoin_iCO {
     }
 
     //func for investor to sell their coins 
-    function sellMannanCoins(address investor,uint coinsToSell) external  {
+    function sellMannanCoins(address investor,uint coinsToSell) external canSellCoin(investor,coinsToSell) {
         equityInMannanCoin[investor] -= coinsToSell; 
         equityInUSD[investor] = equityInMannanCoin[investor] / usdValFor1Coin; //now using this way for setting is better as you can see 
-
         totalCoinsBought -= coinsToSell;
     }
 }
