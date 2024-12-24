@@ -8,16 +8,13 @@ contract MannanCoin_ICO {
     //state variables
     //introducing total number of MannanCoin to the public on ICO for sale is
 
-    //For Remix:
-    //(
-    // address public sender;
-    // constructor(){
-    //     sender = msg.sender;
-    // }
-    //  )
+// msg.sender is a special variable in Solidity. It represents the address of the person (or account) calling the contract.
+// When the contract is deployed, the deployer (the person/account paying the gas fee to deploy the contract) becomes msg.sender.
+    address public owner;
 
     uint public totalCoins = 1000000;
 
+    //just for fun, we're gonna say that $1 is 1000 hadcoin.
     //conversion value like how much 1 Mannan Coin in US values (1 dolloar = 1000 Mannan Coin )
     uint public usdValFor1Coin = 1000; //value of 1 dollar in mannanCoin (too cheap for now)
 
@@ -34,11 +31,7 @@ contract MannanCoin_ICO {
 
     //checking if a new investor can (or old one but buying again) can buy mannanCoin ( basically checking if any mannanCoin are left or not)
     modifier canBuyCoin(uint usdInvestedForCoins) {
-        require(
-            ((usdInvestedForCoins * usdValFor1Coin) + totalCoinsBought) <=
-                totalCoins,
-            "We dont have that many coins left."
-        );
+        require(((usdInvestedForCoins * usdValFor1Coin) + totalCoinsBought) <=totalCoins,"We dont have that many coins left.");
         //invested + total sold - total coins issued (to get how much coins left)
         _;
     }
@@ -46,6 +39,10 @@ contract MannanCoin_ICO {
         require(equityInMannanCoin[investor] >= coinsToSell,"You dont have that many coins to sell.");
         require(totalCoinsBought >= coinsToSell, "Total coins bought cannot be less than coins to sell");
         _;
+    }
+
+     constructor(){
+        owner = msg.sender;
     }
 
     //functions

@@ -6,16 +6,12 @@ const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
 describe("MannanCoin_ICO", function () {
-
-  async function getContract() {
-    const signers = await ethers.getSigners()
-    const mCoin = await ethers.getContractFactory("MannanCoin_ICO");
-    const deployedCoin = await mCoin.deploy();
-
-    return { deployedCoin, signers };
-  };
-
-  let owner, buyer, deployedCoinInstance, totalCoins, usdValFor1Coin, totalCoinsBought;
+  let owner,buyer,deployedCoin
+  beforeEach(async ()=>{
+    [owner,buyer] = await ethers.getSigners()
+    mCoin = await ethers.getContractFactory("MannanCoin_ICO");
+    deployedCoin = await mCoin.deploy();
+  })
   // Use beforeEach to initialize the variables(not before as it only fetches once)
   /*
   What is beforeEach?
@@ -25,47 +21,32 @@ describe("MannanCoin_ICO", function () {
   Why is it useful?
   Instead of repeating the same setup code in every test, you can put it in beforeEach so that it automatically runs before every individual test. This reduces duplication and keeps your tests clean
   */
-
-  beforeEach(async function () {
-    const { signers, deployedCoin } = await getContract();
-    owner = signers[0];
-    buyer = signers[1];
-    // Store the contract instance in deployedCoinInstance
-    deployedCoinInstance = deployedCoin;
-    totalCoins = await deployedCoinInstance.totalCoins();
-    usdValFor1Coin = await deployedCoinInstance.usdValFor1Coin();
-    totalCoinsBought = await deployedCoinInstance.totalCoinsBought();
+  describe("Deployment Check ",()=> {
+    it("Cheking the owner : ", async () => {
+      console.log(owner.address);
+      expect(await deployedCoin.owner()).to.be.equal(owner.address);
+    })
   });
+  describe("Check Buy Coin functionality",()=>{
+    let buyTransaction,totalCoins,totalCoinsBoughtBefore,amountInUSD
+    this.beforeEach(async ()=>{
+      totalCoins = await deployedCoin.totalCoins();
+      totalCoinsBoughtBefore = await deployedCoin.totalCoinsBought();
+      amountInUSD = BigInt(5);
+      //here 5 dollar = 5000 coins we are buying
+      buyTransaction = await deployedCoin.buyMannanCoins(buyer.address,amountInUSD);
+      await buyTransaction.wait();
 
-  function logs() {
-    console.log("This is the owners address: ", owner.address);
-    console.log("This is the current buyers address: ", buyer.address);
-    console.log("The total coins in ICO is : ", totalCoins);
-    console.log("The USD to MannanCoin Value in ICO is : ", usdValFor1Coin);
-    console.log("The total coins that are alredy bought are : ", totalCoinsBought);
-    console.log("The total coins that are left for sale is : ", totalCoins - totalCoinsBought);
-  }
-
-  describe("Calling function ", function () {
-    it("Buying Coin : ", async function () {
+    })
+    it("Checking conins amount after coin buy:",async ()=>{
+      const totalCoinsBoughtAfter = await deployedCoin.totalCoinsBought();
+      const usdValFor1Coin = await deployedCoin.usdValFor1Coin();
+      console.log(totalCoins);
+      console.log(totalCoinsBoughtAfter);
       
-      await deployedCoinInstance.buyMannanCoins(buyer.address, 6);
-      await deployedCoinInstance.sellMannanCoins(buyer.address, 1000);
-      const buyersCoin=await deployedCoinInstance.equityInCoin(buyer.address);
-      console.log("This is the amount bought by buyer 1: ",buyersCoin);
-      // Re-fetch the updated state after transaction
-      totalCoinsBought = await deployedCoinInstance.totalCoinsBought();
-      logs();
+      expect(amountInUSD*usdValFor1Coin).to.be.equal(totalCoinsBoughtAfter);
+      expect(totalCoinsBoughtAfter).to.be.greaterThan(totalCoinsBoughtBefore);
+    })
 
-    });
-    it("Selling Coins", async function () {
-      const buyersCoin = await deployedCoinInstance.equityInCoin(buyer.address);
-      console.log(buyersCoin);
-
-      // await deployedCoinInstance.sellMannanCoins(buyer.address, 1000);
-      // Re-fetch the updated state after transaction
-      logs();
-    });
-  });
-
+  })
 });
