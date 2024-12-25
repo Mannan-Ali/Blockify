@@ -35,7 +35,8 @@ contract MannanCoin_ICO {
         //invested + total sold - total coins issued (to get how much coins left)
         _;
     }
-        modifier canSellCoin(address investor,uint coinsToSell) {
+    modifier canSellCoin(address investor,uint coinsToSell) {
+        require(equityInMannanCoin[investor] > 0, "You must be an investor to sell coins.");//not necessarily needed
         require(equityInMannanCoin[investor] >= coinsToSell,"You dont have that many coins to sell.");
         require(totalCoinsBought >= coinsToSell, "Total coins bought cannot be less than coins to sell");
         _;

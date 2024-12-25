@@ -28,10 +28,11 @@ describe("MannanCoin_ICO", function () {
     })
   });
   describe("Check Buy Coin functionality",()=>{
-    let buyTransaction,totalCoins,totalCoinsBoughtBefore,amountInUSD
-    this.beforeEach(async ()=>{
+    let buyTransaction,totalCoins,totalCoinsBoughtBefore,amountInUSD,usdValFor1Coin
+    beforeEach(async ()=>{
       totalCoins = await deployedCoin.totalCoins();
       totalCoinsBoughtBefore = await deployedCoin.totalCoinsBought();
+      usdValFor1Coin = await deployedCoin.usdValFor1Coin()
       amountInUSD = BigInt(5);
       //here 5 dollar = 5000 coins we are buying
       buyTransaction = await deployedCoin.buyMannanCoins(buyer.address,amountInUSD);
@@ -40,13 +41,52 @@ describe("MannanCoin_ICO", function () {
     })
     it("Checking conins amount after coin buy:",async ()=>{
       const totalCoinsBoughtAfter = await deployedCoin.totalCoinsBought();
-      const usdValFor1Coin = await deployedCoin.usdValFor1Coin();
       console.log(totalCoins);
       console.log(totalCoinsBoughtAfter);
       
       expect(amountInUSD*usdValFor1Coin).to.be.equal(totalCoinsBoughtAfter);
       expect(totalCoinsBoughtAfter).to.be.greaterThan(totalCoinsBoughtBefore);
-    })
+    });
+    it("Check Investor balance",async ()=>{
+      const equityInCoins = await deployedCoin.equityInCoin(buyer.address);
+      const equityInUSD = await deployedCoin.amountInUSD(buyer.address);
 
+      console.log(equityInCoins);
+      console.log(equityInUSD);
+      expect(equityInCoins).to.be.equal(amountInUSD*usdValFor1Coin);
+      expect(equityInUSD).to.be.equal(amountInUSD);
+    });
   })
+  describe("Check Sell Coin functionality",()=>{
+    let buyTransaction,sellCoinTransaction,totalCoins,totalCoinsBoughtBefore,amountInUSD,amountInCoin,usdValFor1Coin
+    beforeEach(async ()=>{
+      totalCoins = await deployedCoin.totalCoins();
+      totalCoinsBoughtBefore = await deployedCoin.totalCoinsBought();
+      usdValFor1Coin = await deployedCoin.usdValFor1Coin()
+      amountInUSD = BigInt(5);
+      //here 5 dollar = 5000 coins we are buying
+      buyTransaction = await deployedCoin.buyMannanCoins(buyer.address,amountInUSD);
+      await buyTransaction.wait();
+
+      amountInCoin = BigInt(2000);
+      sellCoinTransaction = await deployedCoin.sellMannanCoins(buyer.address,amountInCoin);
+      await sellCoinTransaction.wait();
+    })
+    it("Checking conins left to sell amount after coin sell:",async ()=>{
+      const totalCoinsBoughtAfter = await deployedCoin.totalCoinsBought();
+      console.log(totalCoins);
+      console.log(totalCoinsBoughtAfter);
+      
+      expect(totalCoinsBoughtAfter).to.be.greaterThan(totalCoinsBoughtBefore);
+    });
+    it("Check Investor balance",async ()=>{
+      const equityInCoins = await deployedCoin.equityInCoin(buyer.address);
+      const equityInUSD = await deployedCoin.amountInUSD(buyer.address);
+
+      console.log(equityInCoins);
+      console.log(equityInUSD);
+      expect(equityInCoins).to.be.equal((amountInUSD*usdValFor1Coin)-amountInCoin);
+      expect(equityInUSD).to.be.equal(amountInUSD-(amountInCoin/usdValFor1Coin));
+    });
+  });
 });
