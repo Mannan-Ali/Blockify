@@ -35,7 +35,7 @@ describe("MannanCoin_ICO", function () {
     beforeEach(async ()=>{
       totalCoins = await deployedCoin.totalCoins();
       totalCoinsBoughtBefore = await deployedCoin.totalCoinsBought();
-      oneMannanCoinInWei = await deployedCoin.oneMannanCoinInWei()
+      oneMannanCoinInWei = await deployedCoin.oneMannanCoinInWei();
       amountInWei = tokens(2.5);
       //here 5 dollar = 5000 coins we are buying
       buyTransaction = await deployedCoin.connect(buyer).buyMannanCoins({ value : amountInWei });
@@ -60,70 +60,65 @@ describe("MannanCoin_ICO", function () {
       expect(equityInWei).to.be.equal(amountInWei);
     });
   })
-  // describe("Check Sell Coin functionality",()=>{
-  //   let buyTransaction,sellCoinTransaction,totalCoins,totalCoinsBoughtBefore,amountInUSD,amountInCoin,usdValFor1Coin
-  //   beforeEach(async ()=>{
-  //     totalCoins = await deployedCoin.totalCoins();
-  //     totalCoinsBoughtBefore = await deployedCoin.totalCoinsBought();
-  //     usdValFor1Coin = await deployedCoin.usdValFor1Coin()
-  //     amountInUSD = BigInt(5);
-  //     //here 5 dollar = 5000 coins we are buying
-  //     buyTransaction = await deployedCoin.buyMannanCoins(buyer.address,amountInUSD);
-  //     await buyTransaction.wait();
+  describe("Check Sell Coin functionality",()=>{
+    let buyTransaction,sellCoinTransaction,totalCoins,totalCoinsBoughtBefore,amountInWei,amountInCoin,oneMannanCoinInWei
+    beforeEach(async ()=>{
+      totalCoins = await deployedCoin.totalCoins();
+      totalCoinsBoughtBefore = await deployedCoin.totalCoinsBought();
+      oneMannanCoinInWei = await deployedCoin.oneMannanCoinInWei();
+      amountInWei = tokens(2.5);
 
-  //     amountInCoin = BigInt(2000);
-  //     sellCoinTransaction = await deployedCoin.sellMannanCoins(buyer.address,amountInCoin);
-  //     await sellCoinTransaction.wait();
-  //   })
-  //   it("Checking conins left to sell amount after coin sell:",async ()=>{
-  //     const totalCoinsBoughtAfter = await deployedCoin.totalCoinsBought();
-  //     console.log(totalCoins);
-  //     console.log(totalCoinsBoughtAfter);
+      buyTransaction = await deployedCoin.connect(buyer).buyMannanCoins({ value : amountInWei });
+      await buyTransaction.wait();
+
+      amountInCoin = BigInt(2000);
+      sellCoinTransaction = await deployedCoin.connect(buyer).sellMannanCoins(amountInCoin);
+      await sellCoinTransaction.wait();
+    })
+    it("Checking conins left to sell amount after coin sell:",async ()=>{
+      const totalCoinsBoughtAfter = await deployedCoin.totalCoinsBought();
+      console.log(totalCoins);
+      console.log(totalCoinsBoughtAfter);
       
-  //     expect(totalCoinsBoughtAfter).to.be.greaterThan(totalCoinsBoughtBefore);
-  //   });
-  //   it("Check Investor balance",async ()=>{
-  //     const equityInCoins = await deployedCoin.equityInCoin(buyer.address);
-  //     const equityInUSD = await deployedCoin.amountInUSD(buyer.address);
+      expect(totalCoinsBoughtAfter).to.be.greaterThan(totalCoinsBoughtBefore);
+    });
+    it("Check Investor balance",async ()=>{
+      const equityInCoins = await deployedCoin.equityInCoin(buyer.address);
+      const equityInWei = await deployedCoin.amountInWei(buyer.address);
 
-  //     console.log(equityInCoins);
-  //     console.log(equityInUSD);
-  //     expect(equityInCoins).to.be.equal((amountInUSD*usdValFor1Coin)-amountInCoin);
-  //     expect(equityInUSD).to.be.equal(amountInUSD-(amountInCoin/usdValFor1Coin));
-  //   });
-  // });
-  // describe("Checking Withdrawal function : ", ()=>{
-  //   let deployedCoinAddress,transaction,amountInUSD,balanceBeforeWithdraw
-  //   beforeEach(async ()=>{
-  //     deployedCoinAddress = await deployedCoin.getAddress();
+      console.log(equityInCoins);
+      console.log(equityInWei);
+      expect(equityInCoins).to.be.equal((amountInWei/oneMannanCoinInWei)-amountInCoin);
+      expect(equityInWei).to.be.equal(amountInWei-(amountInCoin*oneMannanCoinInWei));
+    });
+  });
+  describe("Checking Withdrawal function : ", ()=>{
+    let deployedCoinAddress,transaction,amountInWei,balanceBeforeWithdraw
+    beforeEach(async ()=>{
+      deployedCoinAddress = await deployedCoin.getAddress();
 
-  //     amountInUSD = BigInt(5);
-  //     //here 5 dollar = 5000 coins we are buying
-  //     transaction = await deployedCoin.buyMannanCoins(buyer.address,amountInUSD);
-  //     await transaction.wait();
+      amountInWei = tokens(2.5);
 
-  //     transaction = await deployedCoin.buyMannanCoins(buyer.address,amountInUSD);
-  //     await transaction.wait();
+      transaction = await deployedCoin.connect(buyer).buyMannanCoins({ value : amountInWei });
+      await transaction.wait();
       
-  //     balanceBeforeWithdraw = await ethers.provider.getBalance(owner.address);
+      balanceBeforeWithdraw = await ethers.provider.getBalance(owner.address);
 
-  //     transaction = await deployedCoin.connect(owner).withdraw();
-  //     await transaction.wait();
+      transaction = await deployedCoin.connect(owner).withdraw();
+      await transaction.wait();
+    })
+    it("Check Withdrawing of money : ",async ()=>{
+      const balanceAfterWithdraw = await ethers.provider.getBalance(owner.address);
+      console.log(balanceBeforeWithdraw);  
+      console.log(balanceAfterWithdraw);
+      expect(balanceAfterWithdraw).to.be.gt(balanceBeforeWithdraw);
+    })
 
-
-  //   })
-  //   it("Check Withdrawing of money : ",async ()=>{
-  //     const balanceAfterWithdraw = await ethers.provider.getBalance(owner.address);
-  //     console.log(balanceBeforeWithdraw);  
-  //     console.log(balanceAfterWithdraw);
-  //     expect(balanceAfterWithdraw).to.be.gt(balanceBeforeWithdraw);
-  //   })
-
-  //   it("Check if any amount left in contract balance : ",async ()=>{
-  //     const balanceInContract = await ethers.provider.getBalance(deployedCoinAddress);
-  //     console.log(balanceInContract);
+    it("Check if any amount left in contract balance : ",async ()=>{
+      const balanceInContract = await ethers.provider.getBalance(deployedCoinAddress);
+      console.log(balanceInContract);
       
-  //     expect(balanceInContract).to.be.equal(0);
-  //   })
-  // })
+      expect(balanceInContract).to.be.equal(0);
+    })
+  })
 });
