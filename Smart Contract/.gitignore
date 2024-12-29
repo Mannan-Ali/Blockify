@@ -17,4 +17,4 @@ node_modules
 ignition/deployments/chain-31337
 
 # Ignore the CopyMannanCoin.sol file
-Smart Contract/contracts/CopyMannanCoin.sol
+contracts/CopyMannanCoin.sol
