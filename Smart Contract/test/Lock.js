@@ -5,6 +5,8 @@ const {
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
+
+//converts in wei
 const tokens = (n) => {
   return ethers.parseUnits(n.toString(), 'ether')
 }
@@ -61,7 +63,8 @@ describe("MannanCoin_ICO", function () {
     });
   })
   describe("Check Sell Coin functionality",()=>{
-    let buyTransaction,sellCoinTransaction,totalCoins,totalCoinsBoughtBefore,amountInWei,amountInCoin,oneMannanCoinInWei
+    let buyTransaction,sellCoinTransaction,totalCoins,totalCoinsBoughtBefore,amountInWei,amountInCoin,oneMannanCoinInWei,buyerInitialBalance,
+    buyerFinalBalance;
     beforeEach(async ()=>{
       totalCoins = await deployedCoin.totalCoins();
       totalCoinsBoughtBefore = await deployedCoin.totalCoinsBought();
@@ -71,9 +74,14 @@ describe("MannanCoin_ICO", function () {
       buyTransaction = await deployedCoin.connect(buyer).buyMannanCoins({ value : amountInWei });
       await buyTransaction.wait();
 
+      buyerInitialBalance = await ethers.provider.getBalance(buyer.address);
+
       amountInCoin = BigInt(2000);
       sellCoinTransaction = await deployedCoin.connect(buyer).sellMannanCoins(amountInCoin);
       await sellCoinTransaction.wait();
+
+      buyerFinalBalance = await ethers.provider.getBalance(buyer.address);
+
     })
     it("Checking conins left to sell amount after coin sell:",async ()=>{
       const totalCoinsBoughtAfter = await deployedCoin.totalCoinsBought();
@@ -91,6 +99,15 @@ describe("MannanCoin_ICO", function () {
       expect(equityInCoins).to.be.equal((amountInWei/oneMannanCoinInWei)-amountInCoin);
       expect(equityInWei).to.be.equal(amountInWei-(amountInCoin*oneMannanCoinInWei));
     });
+    it("Check Investor ETH balance after sell",async ()=>{
+      console.log(`Buyer Initial ETH Balance: ${buyerInitialBalance}`);
+      console.log(`Buyer Final ETH Balance: ${buyerFinalBalance}`);
+
+      const expectedRefund = amountInCoin * oneMannanCoinInWei;
+
+      expect(buyerFinalBalance).to.be.greaterThan(buyerInitialBalance);
+    });
+    
   });
   describe("Checking Withdrawal function : ", ()=>{
     let deployedCoinAddress,transaction,amountInWei,balanceBeforeWithdraw

@@ -4,7 +4,6 @@ pragma solidity ^0.8.28;
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 contract MannanCoin_ICO {
-
     // msg.sender is a special variable in Solidity. It represents the address of the person (or account) calling the contract.
     // When the contract is deployed, the deployer (the person/account paying the gas fee to deploy the contract) becomes msg.sender.
     address public owner;
@@ -12,7 +11,7 @@ contract MannanCoin_ICO {
     uint public totalCoins = 1000000;
 
     // uint public oneEtherValForCoin = 1000;
-    //as 1 ether = 1000 mannan coins and 1 ether = 10^18 wei 
+    //as 1 ether = 1000 mannan coins and 1 ether = 10^18 wei
     uint public oneMannanCoinInWei = 1000000000000000;
 
     //total number of mannanCoin that is bought from the issued once(1000000)
@@ -26,12 +25,10 @@ contract MannanCoin_ICO {
 
     //modifier
 
-
     //no need for passing parameter as msg value is accessible here as canBuy used in function
     modifier canBuyCoin() {
         require(
-            ((msg.value / oneMannanCoinInWei) + totalCoinsBought) <=
-                totalCoins,
+            ((msg.value / oneMannanCoinInWei) + totalCoinsBought) <= totalCoins,
             "We dont have that many coins left."
         );
         _;
@@ -77,20 +74,38 @@ contract MannanCoin_ICO {
     function buyMannanCoins() external payable canBuyCoin {
         uint coinsBought = msg.value / oneMannanCoinInWei;
         equityInMannanCoin[msg.sender] += coinsBought; //here we havre += so if same investor boughts again it gets added
-        equityInWei[msg.sender] = equityInMannanCoin[msg.sender] * oneMannanCoinInWei; //this way is more dynamic and better rather than adding the value of usd(+=)
+        equityInWei[msg.sender] =
+            equityInMannanCoin[msg.sender] *
+            oneMannanCoinInWei; //this way is more dynamic and better rather than adding the value of usd(+=)
 
         totalCoinsBought += coinsBought;
     }
 
+    function sellMannanCoins(
+        uint coinsToSell
+    ) external payable canSellCoin(coinsToSell) {
+        // Calculate the amount of Ether to return
+        uint weiToReturn = coinsToSell * oneMannanCoinInWei;
 
-    function sellMannanCoins(uint coinsToSell) external canSellCoin(coinsToSell)
-    {
+        // Check if the contract has enough balance to return the Ether
+        require(
+            address(this).balance >= weiToReturn,
+            "Insufficient contract balance to complete the sale"
+        );
+
         equityInMannanCoin[msg.sender] -= coinsToSell;
-        equityInWei[msg.sender] = equityInMannanCoin[msg.sender] * oneMannanCoinInWei; //now using this way for setting is better as you can see
+        equityInWei[msg.sender] =
+            equityInMannanCoin[msg.sender] *
+            oneMannanCoinInWei; //now using this way for setting is better as you can see
         totalCoinsBought -= coinsToSell;
+
+        // Transfer the Ether back to the seller
+        (bool success, ) = payable(msg.sender).call{value: weiToReturn}("");
+        require(success, "Transfer failed. Unable to send Ether to seller.");
     }
 
     function withdraw() public onlyOwner {
+        //address(this) means contract address
         (bool success, ) = owner.call{value: address(this).balance}(""); //("") Means no data payload is included that is you are not calling any function
         require(success);
     }
