@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="footer__container container grid">
         <div className="footer__left">
           <NavLink to="/" className="footer__logo">
-          <i className="ri-btc-fill"></i>MCOIN
+          <i className="ri-btc-fill"></i>MannanCoin
           </NavLink>
 
           <p className="footer__description">

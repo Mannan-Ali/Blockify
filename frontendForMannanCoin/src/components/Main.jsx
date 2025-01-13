@@ -1,10 +1,11 @@
 import myImage from "../assets/img/currency.png";
+import descImg from "../assets/img/coins.png";
 import { NavLink } from "react-router-dom";
 const Main = () => {
   return (
     <main className="main">
       {/* <!--==================== HOME ====================--> */}
-      <section className="home section">
+      <section className="home section" id="home">
         <div className="home__container container grid">
           <img src={myImage} alt="image" className="home__img" />
 
@@ -24,7 +25,7 @@ const Main = () => {
               </p>
             </p>
             <div className="home__buttons">
-              <NavLink to="/" className="button">
+              <NavLink to="/transectMcoins" className="button">
                 <span>
                   <i className="ri-arrow-right-line"></i>
                 </span>
@@ -32,6 +33,57 @@ const Main = () => {
               </NavLink>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* <!--==================== DESCRIPTION ====================--> */}
+      <section className="desc section" id="Description">
+        <h2 className="section__title">
+        CLOSER LOOK AT <br />
+        OUR VISION
+        </h2>
+        <div className="desc__container container grid">
+          <img
+            src={descImg}
+            alt="image"
+            className="desc__img"
+          />
+
+          <ul className="desc__list">
+            <li className="desc__item">
+              <i className="ri-checkbox-fill"></i>
+              <p>
+                1 MannanCoin = 0.001 ETH, making it accessible for everyone.
+              </p>
+            </li>
+
+            <li className="desc__item">
+              <i className="ri-checkbox-fill"></i>
+              <p>
+                Tokens are limited to 1,000,000, ensuring exclusivity and value.
+              </p>
+            </li>
+
+            <li className="desc__item">
+              <i className="ri-checkbox-fill"></i>
+              <p>Backed by secure smart contracts and built on Ethereum.</p>
+            </li>
+
+            <li className="desc__item">
+              <i className="ri-checkbox-fill"></i>
+              <p>
+              Buy tokens securely with real-time tracking and transparent pricing.
+              </p>
+            </li>
+
+            <li className="desc__item">
+              <i className="ri-checkbox-fill"></i>
+              <p>
+                Empowering investors with exclusive access to next-gen
+                cryptocurrency.
+              </p>
+            </li>
+          </ul>
         </div>
       </section>
     </main>
