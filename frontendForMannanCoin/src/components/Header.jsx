@@ -92,12 +92,12 @@ const Header = (props) => {
 
         <div className="nav__actions">
           {props.account ? (
-            <p type="button" className="bunav__link">
-              {/* this is how you show not the whole account but the .. one  */}
+            <p type="button" className="nav__connect">
+              {/* this is how you show not the whole account but the ... one  */}
               {props.account.slice(0, 2) + "..." + props.account.slice(39, 42)}
             </p>
           ) : (
-            <i className="ri-user-line" onClick={connectHandler}></i>
+            <p className="nav__connect" onClick={connectHandler}>LINK</p>
           )}
 
           {/* <!-- Toggle Button --> */}

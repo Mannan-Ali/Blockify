@@ -162,6 +162,11 @@ header {
   align-items: center;
 }
 
+.nav__connect{
+  font-weight: var(--font-semi-bold);
+  font-size: var(--normal-font-size);
+}
+
 /* Navigation for mobile devices */
 @media screen and (max-width: 1150px) {
   .nav__menu {
@@ -296,6 +301,7 @@ header {
   color: var(--first-color);
 }
 
+/* <!-- ✨ DESCRIPTION ✨ --> */
 .desc__container {
   padding-top: 2rem;
   row-gap: 2rem;
