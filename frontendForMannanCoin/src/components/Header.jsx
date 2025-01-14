@@ -60,7 +60,10 @@ const Header = (props) => {
                 className={({ isActive }) =>
                   isActive ? `nav__link active-link` : `nav__link`
                 }
-                onClick={closeMenu}
+                onClick={() => {
+                  closeMenu(); // Call the closeMenu function
+                  alert("\u2139 The functions Buy, Sell and Check Details are not available as it hasn't been deployed on the live test network due to insufficient test Sepolia Ether 😢. You can check the video provided in Readme.md for how it works."); // Trigger an alert
+                }}
               >
                 Buy Token
               </NavLink>
