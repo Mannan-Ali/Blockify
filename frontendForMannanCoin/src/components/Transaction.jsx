@@ -192,7 +192,7 @@ const Transaction = () => {
         <div className="form-container">
           <form action="#">
             <div className="amount">
-              <label htmlFor="fname"> Enter Coins:</label>
+              <label htmlFor="fname"> Enter ETH(Buy) or Coins(Sell) :</label>
               <input
                 type="number"
                 id="fname"

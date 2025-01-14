@@ -80,7 +80,7 @@ const Footer = () => {
               </a>
 
               <a
-                href="https://twitter.com/"
+                href="https://x.com/mack__21"
                 target="_blank"
                 className="footer__social-link"
               >
