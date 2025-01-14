@@ -11,7 +11,7 @@ const Main = () => {
 
           <div className="home__data">
             <h1 className="home__title">
-              THE FUTURE <br/>
+              THE FUTURE <br />
               <span>FINANCE</span> IN
               <br />
               YOUR HANDS
@@ -25,7 +25,15 @@ const Main = () => {
               </p>
             </p>
             <div className="home__buttons">
-              <NavLink to="/transectMcoins" className="button">
+              <NavLink
+                to="/transectMcoins"
+                onClick={() => {
+                  alert(
+                    "\u2139 The functions Buy, Sell and Check Details are not available as it hasn't been deployed on the live test network due to insufficient test Sepolia Ether 😢. You can check the video provided in Readme.md for how it works."
+                  );
+                }}
+                className="button"
+              >
                 <span>
                   <i className="ri-arrow-right-line"></i>
                 </span>
@@ -39,15 +47,11 @@ const Main = () => {
       {/* <!--==================== DESCRIPTION ====================--> */}
       <section className="desc section" id="Description">
         <h2 className="section__title">
-        CLOSER LOOK AT <br />
-        OUR VISION
+          CLOSER LOOK AT <br />
+          OUR VISION
         </h2>
         <div className="desc__container container grid">
-          <img
-            src={descImg}
-            alt="image"
-            className="desc__img"
-          />
+          <img src={descImg} alt="image" className="desc__img" />
 
           <ul className="desc__list">
             <li className="desc__item">
@@ -72,7 +76,8 @@ const Main = () => {
             <li className="desc__item">
               <i className="ri-checkbox-fill"></i>
               <p>
-              Buy tokens securely with real-time tracking and transparent pricing.
+                Buy tokens securely with real-time tracking and transparent
+                pricing.
               </p>
             </li>
 
