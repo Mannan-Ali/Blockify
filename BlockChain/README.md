@@ -11,4 +11,30 @@ This sub-project highlights the successful creation of a custom blockchain from 
   - `/is_valid`: Checks if the blockchain is valid.
 - **⚙️ Flask Integration**: Offers a seamless way to interact with the blockchain via Postman or other HTTP clients.
 
+
+## ⚙️ Setup Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/Mannan-Ali/Blockify.git
+```
+
+Go to the **BlockChain** folder:
+
+```bash
+  cd BlockChain
+```
+
+Install the following:
+
+```bash
+  pip install flask==3.1.0
+```
+
+Run all the BlockChain.py file :
+
+    ```bash
+    python BlockChain.py
+    ```
 **This part of project serves as the foundation for building advanced blockchain applications like cryptocurrencies and smart contracts.**

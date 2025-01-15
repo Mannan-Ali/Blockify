@@ -96,7 +96,7 @@ Clone the project
 Go to the **Cryptocurrency** folder:
 
 ```bash
-  cd "Cryptocurrency"
+  cd Cryptocurrency
 ```
 
 Install the following:

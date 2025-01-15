@@ -6,41 +6,41 @@ The **MannanCoin ICO** smart contract facilitates secure buying and selling of *
 
 Follow these steps to set up and deploy the **MannanCoin ICO** smart contract locally:
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/Mannan-Ali/Blockify.git
-   ```
+**Clone the Repository**
 
-   Navigate to the **Smart Contract** folder:
+```bash
+  git clone https://github.com/Mannan-Ali/Blockify.git
+```
 
-    ```bash
-    cd "Smart Contract"
-    ```
-   Install the dependencies for the smart contract:
+Navigate to the **Smart Contract** folder:
 
-    ```bash
-    npm install
-    ```
-   In one terminal or bash window, start the Hardhat local node:
+```bash
+  cd "Smart Contract"
+```
 
-    ```bash
-    npx hardhat node
-    ```
-   To test the contract run:
+Install the dependencies for the smart contract:
 
-    ```bash
+```bash
+   npm install
+```
+
+
+To test the contract run:
+
+```bash
     npx hardhat test
-    ```
-   **To deploy the contract run:**
+```
 
-   In one terminal/bash window
+**To deploy the contract run:**
 
-    ```bash
+In one terminal/bash window
+
+```bash
     npx hardhat node
-    ```
-    
-    Open a new terminal/bash window and run:
+```
 
-    ```bash
-    npx hardhat ignition deploy ignition/modules/MannanCoin.js --network localhost
-    ```
+Open a new terminal/bash window and run:
+
+```bash
+  npx hardhat ignition deploy ignition/modules/MannanCoin.js --network localhost
+```
