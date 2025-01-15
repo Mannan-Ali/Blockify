@@ -8,6 +8,7 @@ instance/*
 .env
 
 #Custom files
+Cryptocurrency/copyMannanCoin.py
 Cryptocurrency/port1.py
 Cryptocurrency/port2.py
 Cryptocurrency/port3.py
