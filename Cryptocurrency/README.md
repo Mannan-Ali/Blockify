@@ -7,9 +7,10 @@ This is a simple cryptocurrency blockchain implementation, allowing nodes to min
 ## 🚀 Project Overview
 
 This blockchain simulates a cryptocurrency system with:
+
 - Multiple nodes running on different ports (e.g., `127.0.0.1:5001`, `127.0.0.1:5002`).
 - Each node has a unique node address generated using UUID4 function, which helps in distinguishing nodes and ensuring transactions are properly managed.
-- This address is important because it ensures that each node can identify itself when adding transactions, mining blocks, and receiving rewards. 
+- This address is important because it ensures that each node can identify itself when adding transactions, mining blocks, and receiving rewards.
 
 - Each node can send transactions, mine blocks, and reward miners with coins.
 - Transaction rewards are given to the node that mines the block
@@ -28,57 +29,89 @@ This blockchain simulates a cryptocurrency system with:
 
 ---
 
-## 🔗 New API Endpoints Added 
+## 🔗 API Endpoints Added
 
 ### 1. **Add Transaction**
+
 - **POST** `/add_transaction`
 - Adds a new transaction to the blockchain.
 - **Request Body**:
-    ```json
-    {
-      "sender": "sender",
-      "receiver": "receiver",
-      "amount": "amount"
-    }
-    ```
+  ```json
+  {
+    "sender": "sender",
+    "receiver": "receiver",
+    "amount": "amount"
+  }
+  ```
 - **Response**:
-    ```json
-    {
-      "message": "This transaction will be added to block number {specific block}"
-    }
-    ```
-
+  ```json
+  {
+    "message": "This transaction will be added to block number {specific block}"
+  }
+  ```
 
 ### 2. **Connect Node**
+
 - **POST** `/connect_node`
 - Connects a new node to the blockchain network.
 - **Request Body**:
-    ```json
-    {
-      "nodes":{
-        "address 1"
-        "address 2"
-        "..."
-      }
+  ```json
+  {
+    "nodes":{
+      "address 1"
+      "address 2"
+      "..."
     }
-    ```
+  }
+  ```
 - **Response**:
-    ```json
-    {
-        "message":"All the nodes are connected and the number of nodes oon the blockchain are : ",
-        "total-nodes":"number of nodes"
-        }
-    ```
-
+  ```json
+  {
+    "message": "All the nodes are connected and the number of nodes oon the blockchain are : ",
+    "total-nodes": "number of nodes"
+  }
+  ```
 
 ### 4. **Replace Chain**
+
 - **GET** `/replace_chain`
 - Replaces the current blockchain with a longer valid chain if available from a connected node.
 - **Response**:
-    ```json
-    {
+  ```json
+  {
     "chain": [],
     "length": "lenght of chain",
     "message": "message depending on True or False"
-    }
+  }
+  ```
+
+## ⚙️ Setup Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/Mannan-Ali/Blockify.git
+```
+
+Go to the **Cryptocurrency** folder:
+
+```bash
+  cd "Cryptocurrency"
+```
+
+Install the following:
+
+```bash
+  pip install flask==3.1.0 python-dotenv==1.0.1 requests==2.32.3 urllib3==2.2.3
+```
+
+
+Make n  different copy of the mannanCoin.py file and change the port numbers (Eg: 5000,5001,5002).
+
+Run all the .py files in different bash/terminal window:
+
+    ```bash
+    python yourCopyFileNames.py
     ```
+
+Now use Postman to interact with the different nodes to test API endpoints, send transactions, mine blocks, and validate the blockchain across all connected nodes.
