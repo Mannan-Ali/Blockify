@@ -29,7 +29,7 @@ const Main = () => {
                 to="/transectMcoins"
                 onClick={() => {
                   alert(
-                    "\u2139 The functions Buy, Sell and Check Details are not available as it hasn't been deployed on the live test network due to insufficient test Sepolia Ether 😢. You can check the video provided in Readme.md for how it works."
+                    "\u2139 The functions Buy, Sell and Check Details are not available as it hasn't been deployed on the live test network due to insufficient test Sepolia Ether.😢"
                   );
                 }}
                 className="button"

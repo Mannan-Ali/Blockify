@@ -1,13 +1,46 @@
-# Sample Hardhat Project
+# 🪙 MannanCoin ICO
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+The **MannanCoin ICO** smart contract facilitates secure buying and selling of **MannanCoins** on the Ethereum blockchain. It ensures real-time equity tracking and token supply management, making it an efficient and transparent solution for decentralized token sales.
 
-Try running some of the following tasks:
+## ⚙️ Setup Locally
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
-```
+Follow these steps to set up and deploy the **MannanCoin ICO** smart contract locally:
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Mannan-Ali/Blockify.git
+   ```
+
+   Navigate to the **Smart Contract** folder:
+
+    ```bash
+    cd "Smart Contract"
+    ```
+   Install the dependencies for the smart contract:
+
+    ```bash
+    npm install
+    ```
+   In one terminal or bash window, start the Hardhat local node:
+
+    ```bash
+    npx hardhat node
+    ```
+   To test the contract run:
+
+    ```bash
+    npx hardhat test
+    ```
+   **To deploy the contract run:**
+
+   In one terminal/bash window
+
+    ```bash
+    npx hardhat node
+    ```
+    
+    Open a new terminal/bash window and run:
+
+    ```bash
+    npx hardhat ignition deploy ignition/modules/MannanCoin.js --network localhost
+    ```
